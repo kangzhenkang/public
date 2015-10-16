@@ -70,58 +70,52 @@ public class KryoTest {
         }
 
         String a = serializationList(lst, CustomItemDto.class);
-        List<CustomItemDto> newValue = deserializationList(a,
-                CustomItemDto.class);
+        List<CustomItemDto> newValue = deserializationList(a, CustomItemDto.class);
         Assert.assertEquals(lst.size(), newValue.size());
     }
 
     @Test(invocationCount = 1, threadPoolSize = 1)
     public void testBean() {
-        List<CustomCategoryDto> lst = new ArrayList<CustomCategoryDto>();
-        for (int j = 0; j < 10; j++) {
-            CustomCategoryDto dto = new CustomCategoryDto();
-            dto.setCategoryCode("ABCD_001");
-            dto.setCategoryName("呼吸系统");
-            for (int i = 0; i < 10; i++) {
-                CustomItemDto val = new CustomItemDto();
-                val.setId(Long.parseLong(String.valueOf(i)));
-                val.setItemCode("");
-                val.setItemDespositPrice(32.45);
-                val.setItemMemo(null);
-                val.setItemName("张金");
-                val.setItemPrice(89.02);
-                val.setSort(10);
-                dto.getCustomItemList().add(val);
-            }
-            for (int i = 0; i < 10; i++) {
-                CustomItemDto val = new CustomItemDto();
-                val.setId(Long.parseLong(String.valueOf(i)));
-                val.setItemCode("");
-                val.setItemDespositPrice(32.45);
-                val.setItemMemo(null);
-                val.setItemName("张金");
-                val.setItemPrice(89.02);
-                val.setSort(10);
-                dto.getCustomItemSet().add(val);
-            }
-            for (int i = 0; i < 10; i++) {
-                CustomItemDto val = new CustomItemDto();
-                val.setId(Long.parseLong(String.valueOf(i)));
-                val.setItemCode("");
-                val.setItemDespositPrice(32.45);
-                val.setItemMemo(null);
-                val.setItemName("张金");
-                val.setItemPrice(89.02);
-                val.setSort(10);
-                dto.getCustomItemMap().put(String.valueOf(i), val);
-            }
-            lst.add(dto);
+        CustomCategoryDto dto = new CustomCategoryDto();
+        dto.setCategoryCode("ABCD_001");
+        dto.setCategoryName("呼吸系统");
+        for (int i = 0; i < 10; i++) {
+            CustomItemDto val = new CustomItemDto();
+            val.setId(Long.parseLong(String.valueOf(i)));
+            val.setItemCode("");
+            val.setItemDespositPrice(32.45);
+            val.setItemMemo(null);
+            val.setItemName("张金");
+            val.setItemPrice(89.02);
+            val.setSort(10);
+            dto.getCustomItemList().add(val);
+        }
+        for (int i = 0; i < 10; i++) {
+            CustomItemDto val = new CustomItemDto();
+            val.setId(Long.parseLong(String.valueOf(i)));
+            val.setItemCode("");
+            val.setItemDespositPrice(32.45);
+            val.setItemMemo(null);
+            val.setItemName("张金");
+            val.setItemPrice(89.02);
+            val.setSort(10);
+            dto.getCustomItemSet().add(val);
+        }
+        for (int i = 0; i < 10; i++) {
+            CustomItemDto val = new CustomItemDto();
+            val.setId(Long.parseLong(String.valueOf(i)));
+            val.setItemCode("");
+            val.setItemDespositPrice(32.45);
+            val.setItemMemo(null);
+            val.setItemName("张金");
+            val.setItemPrice(89.02);
+            val.setSort(10);
+            dto.getCustomItemMap().put(String.valueOf(i), val);
         }
 
-        String a = serializationList(lst, CustomCategoryDto.class);
-        List<CustomCategoryDto> newValue = deserializationList(a,
-                CustomCategoryDto.class);
-        Assert.assertEquals(lst.size(), newValue.size());
+        String a = serializationObject(dto);
+        CustomCategoryDto newValue = deserializationObject(a, CustomCategoryDto.class);
+        Assert.assertEquals(dto.getCategoryCode(), newValue.getCategoryCode());
     }
 
     @Test(invocationCount = 1, threadPoolSize = 1)
@@ -140,8 +134,7 @@ public class KryoTest {
         }
 
         String a = serializationMap(map, CustomItemDto.class);
-        Map<String, CustomItemDto> newValue = deserializationMap(a,
-                CustomItemDto.class);
+        Map<String, CustomItemDto> newValue = deserializationMap(a, CustomItemDto.class);
         Assert.assertEquals(map.size(), newValue.size());
     }
 
@@ -188,20 +181,17 @@ public class KryoTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Serializable> T deserializationObject(String obj,
-            Class<T> clazz) {
+    private <T extends Serializable> T deserializationObject(String obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.register(clazz, new JavaSerializer());
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(
-                new Base64().decode(obj));
+        ByteArrayInputStream bais = new ByteArrayInputStream(new Base64().decode(obj));
         Input input = new Input(bais);
         return (T) kryo.readClassAndObject(input);
     }
 
-    private <T extends Serializable> String serializationList(List<T> obj,
-            Class<T> clazz) {
+    private <T extends Serializable> String serializationList(List<T> obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.setRegistrationRequired(true);
@@ -231,8 +221,7 @@ public class KryoTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Serializable> List<T> deserializationList(String obj,
-            Class<T> clazz) {
+    private <T extends Serializable> List<T> deserializationList(String obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.setRegistrationRequired(true);
@@ -244,14 +233,12 @@ public class KryoTest {
         kryo.register(clazz, new JavaSerializer());
         kryo.register(ArrayList.class, serializer);
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(
-                new Base64().decode(obj));
+        ByteArrayInputStream bais = new ByteArrayInputStream(new Base64().decode(obj));
         Input input = new Input(bais);
         return (List<T>) kryo.readObject(input, ArrayList.class, serializer);
     }
 
-    private <T extends Serializable> String serializationMap(
-            Map<String, T> obj, Class<T> clazz) {
+    private <T extends Serializable> String serializationMap(Map<String, T> obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.setRegistrationRequired(true);
@@ -283,8 +270,7 @@ public class KryoTest {
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Serializable> Map<String, T> deserializationMap(
-            String obj, Class<T> clazz) {
+    private <T extends Serializable> Map<String, T> deserializationMap(String obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.setRegistrationRequired(true);
@@ -298,15 +284,12 @@ public class KryoTest {
         kryo.register(clazz, new JavaSerializer());
         kryo.register(HashMap.class, serializer);
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(
-                new Base64().decode(obj));
+        ByteArrayInputStream bais = new ByteArrayInputStream(new Base64().decode(obj));
         Input input = new Input(bais);
-        return (Map<String, T>) kryo.readObject(input, HashMap.class,
-                serializer);
+        return (Map<String, T>) kryo.readObject(input, HashMap.class, serializer);
     }
 
-    public static <T extends Serializable> String serializationSet(Set<T> obj,
-            Class<T> clazz) {
+    public static <T extends Serializable> String serializationSet(Set<T> obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.setRegistrationRequired(true);
@@ -336,8 +319,7 @@ public class KryoTest {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Serializable> Set<T> deserializationSet(
-            String obj, Class<T> clazz) {
+    public static <T extends Serializable> Set<T> deserializationSet(String obj, Class<T> clazz) {
         Kryo kryo = new Kryo();
         kryo.setReferences(false);
         kryo.setRegistrationRequired(true);
@@ -349,8 +331,7 @@ public class KryoTest {
         kryo.register(clazz, new JavaSerializer());
         kryo.register(HashSet.class, serializer);
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(
-                new Base64().decode(obj));
+        ByteArrayInputStream bais = new ByteArrayInputStream(new Base64().decode(obj));
         Input input = new Input(bais);
         return (Set<T>) kryo.readObject(input, HashSet.class, serializer);
     }

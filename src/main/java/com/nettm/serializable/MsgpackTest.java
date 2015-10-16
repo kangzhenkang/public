@@ -70,58 +70,52 @@ public class MsgpackTest {
         }
 
         String a = serializationList(lst, CustomItemDto.class);
-        List<CustomItemDto> newValue = deserializationList(a,
-                CustomItemDto.class);
+        List<CustomItemDto> newValue = deserializationList(a, CustomItemDto.class);
         Assert.assertEquals(lst.size(), newValue.size());
     }
 
     @Test(invocationCount = 1, threadPoolSize = 1)
     public void testBean() {
-        List<CustomCategoryDto> lst = new ArrayList<CustomCategoryDto>();
-        for (int j = 0; j < 10; j++) {
-            CustomCategoryDto dto = new CustomCategoryDto();
-            dto.setCategoryCode("ABCD_001");
-            dto.setCategoryName("呼吸系统");
-            for (int i = 0; i < 10; i++) {
-                CustomItemDto val = new CustomItemDto();
-                val.setId(10L);
-                val.setItemCode("");
-                val.setItemDespositPrice(32.45);
-                val.setItemMemo(null);
-                val.setItemName("张金");
-                val.setItemPrice(89.02);
-                val.setSort(10);
-                dto.getCustomItemList().add(val);
-            }
-            for (int i = 0; i < 10; i++) {
-                CustomItemDto val = new CustomItemDto();
-                val.setId(Long.parseLong(String.valueOf(i)));
-                val.setItemCode("");
-                val.setItemDespositPrice(32.45);
-                val.setItemMemo(null);
-                val.setItemName("张金");
-                val.setItemPrice(89.02);
-                val.setSort(10);
-                dto.getCustomItemSet().add(val);
-            }
-            for (int i = 0; i < 10; i++) {
-                CustomItemDto val = new CustomItemDto();
-                val.setId(Long.parseLong(String.valueOf(i)));
-                val.setItemCode("");
-                val.setItemDespositPrice(32.45);
-                val.setItemMemo(null);
-                val.setItemName("张金");
-                val.setItemPrice(89.02);
-                val.setSort(10);
-                dto.getCustomItemMap().put(String.valueOf(i), val);
-            }
-            lst.add(dto);
+        CustomCategoryDto dto = new CustomCategoryDto();
+        dto.setCategoryCode("ABCD_001");
+        dto.setCategoryName("呼吸系统");
+        for (int i = 0; i < 10; i++) {
+            CustomItemDto val = new CustomItemDto();
+            val.setId(10L);
+            val.setItemCode("");
+            val.setItemDespositPrice(32.45);
+            val.setItemMemo(null);
+            val.setItemName("张金");
+            val.setItemPrice(89.02);
+            val.setSort(10);
+            dto.getCustomItemList().add(val);
+        }
+        for (int i = 0; i < 10; i++) {
+            CustomItemDto val = new CustomItemDto();
+            val.setId(Long.parseLong(String.valueOf(i)));
+            val.setItemCode("");
+            val.setItemDespositPrice(32.45);
+            val.setItemMemo(null);
+            val.setItemName("张金");
+            val.setItemPrice(89.02);
+            val.setSort(10);
+            dto.getCustomItemSet().add(val);
+        }
+        for (int i = 0; i < 10; i++) {
+            CustomItemDto val = new CustomItemDto();
+            val.setId(Long.parseLong(String.valueOf(i)));
+            val.setItemCode("");
+            val.setItemDespositPrice(32.45);
+            val.setItemMemo(null);
+            val.setItemName("张金");
+            val.setItemPrice(89.02);
+            val.setSort(10);
+            dto.getCustomItemMap().put(String.valueOf(i), val);
         }
 
-        String a = serializationList(lst, CustomCategoryDto.class);
-        List<CustomCategoryDto> newValue = deserializationList(a,
-                CustomCategoryDto.class);
-        Assert.assertEquals(lst.size(), newValue.size());
+        String a = serializationObject(dto);
+        CustomCategoryDto newValue = deserializationObject(a, CustomCategoryDto.class);
+        Assert.assertEquals(dto.getCategoryCode(), newValue.getCategoryCode());
     }
 
     @Test(invocationCount = 1, threadPoolSize = 1)
@@ -140,8 +134,7 @@ public class MsgpackTest {
         }
 
         String a = serializationMap(map, CustomItemDto.class);
-        Map<String, CustomItemDto> newValue = deserializationMap(a,
-                CustomItemDto.class);
+        Map<String, CustomItemDto> newValue = deserializationMap(a, CustomItemDto.class);
         Assert.assertEquals(map.size(), newValue.size());
     }
 
@@ -175,8 +168,7 @@ public class MsgpackTest {
         return new String(new Base64().encode(b));
     }
 
-    private <T extends Serializable> T deserializationObject(String obj,
-            Class<T> clazz) {
+    private <T extends Serializable> T deserializationObject(String obj, Class<T> clazz) {
         T t = null;
         byte[] bytes = new Base64().decode(obj.getBytes());
         try {
@@ -187,8 +179,7 @@ public class MsgpackTest {
         return t;
     }
 
-    private <T extends Serializable> String serializationList(List<T> obj,
-            Class<T> clazz) {
+    private <T extends Serializable> String serializationList(List<T> obj, Class<T> clazz) {
         byte[] b = null;
         try {
             b = msgpack.write(obj);
@@ -198,8 +189,7 @@ public class MsgpackTest {
         return new String(new Base64().encode(b));
     }
 
-    private <T extends Serializable> List<T> deserializationList(String obj,
-            Class<T> clazz) {
+    private <T extends Serializable> List<T> deserializationList(String obj, Class<T> clazz) {
         Template<T> elementTemplate = msgpack.lookup(clazz);
         Template<List<T>> listTmpl = Templates.tList(elementTemplate);
 
@@ -213,8 +203,7 @@ public class MsgpackTest {
         return t;
     }
 
-    private <T extends Serializable> String serializationMap(
-            Map<String, T> obj, Class<T> clazz) {
+    private <T extends Serializable> String serializationMap(Map<String, T> obj, Class<T> clazz) {
         byte[] b = null;
         try {
             b = msgpack.write(obj);
@@ -224,11 +213,9 @@ public class MsgpackTest {
         return new String(new Base64().encode(b));
     }
 
-    private <T extends Serializable> Map<String, T> deserializationMap(
-            String obj, Class<T> clazz) {
+    private <T extends Serializable> Map<String, T> deserializationMap(String obj, Class<T> clazz) {
         Template<T> elementTemplate = msgpack.lookup(clazz);
-        Template<Map<String, T>> listTmpl = Templates.tMap(Templates.TString,
-                elementTemplate);
+        Template<Map<String, T>> listTmpl = Templates.tMap(Templates.TString, elementTemplate);
 
         Map<String, T> t = null;
         byte[] bytes = new Base64().decode(obj.getBytes());
@@ -240,8 +227,7 @@ public class MsgpackTest {
         return t;
     }
 
-    private <T extends Serializable> String serializationSet(Set<T> obj,
-            Class<T> clazz) {
+    private <T extends Serializable> String serializationSet(Set<T> obj, Class<T> clazz) {
         Template<T> elementTemplate = msgpack.lookup(clazz);
         byte[] b = null;
         try {
@@ -252,8 +238,7 @@ public class MsgpackTest {
         return new String(new Base64().encode(b));
     }
 
-    private <T extends Serializable> Set<T> deserializationSet(String obj,
-            Class<T> clazz) {
+    private <T extends Serializable> Set<T> deserializationSet(String obj, Class<T> clazz) {
         Template<T> elementTemplate = msgpack.lookup(clazz);
         Set<T> t = null;
         byte[] bytes = new Base64().decode(obj.getBytes());
